@@ -4,9 +4,11 @@ import (
 	"golang.org/x/net/websocket"
 	"net/http"
 	"log"
+	"fmt"
 )
 
 func main() {
+	fmt.Println()
 	hub := []*websocket.Conn{}
 	http.Handle("/video", websocket.Handler(func(sock *websocket.Conn) {
 		datas := map[string]interface{}{}
