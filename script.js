@@ -2,20 +2,24 @@ window.onload = function () {
     //var sock = new WebSocket("wss:/" + "/" + pakopac.me + ":8443/video");
     var sock = new WebSocket("ws://" + window.location.host + ":1234/video");
     var video = document.querySelector('#video');
-    console.log(sock);
     sock.onopen = function () {
-        data = {};
+        if(video.currentTime !== 0) {
+            data = {"time": video.currentTime};
+        }
+        else{
+            data = {}
+        }
         sock.send(JSON.stringify(data));
         video.addEventListener("playing", function () {
             data = {
-                "video": video.currentTime,
+                "time": video.currentTime,
                 "play": true
             };
             sock.send(JSON.stringify(data))
         });
         video.addEventListener("pause", function () {
             data = {
-                "video": video.currentTime,
+                "time": video.currentTime,
                 "play": false
             };
             sock.send(JSON.stringify(data))
@@ -42,21 +46,21 @@ window.onload = function () {
             //sock = new WebSocket("ws://" + window.location.host + ":1234/video");
             //var sock = new WebSocket("wss:/" + "/" + pakopac.me + ":8443/video");
         }
-        if (video.currentTime !== json.video) {
-
-            console.log(json.video);
-            console.log(video.currentTime);
-
-            video.currentTime = json.video;
+        if (video.currentTime !== json.time) {
+            video.currentTime = json.time;
         }
         if (json.play === false) {
-            if(video.play) {
-                video.pause()
-            }
+            video.pause()
         }
         if (json.play === true) {
-            if(video.pause){
-                video.play()
+            video.play()
+        }
+        if(json.newConnection === true && video.currentTime !== 0){
+            sock.onopen = function () {
+                data = {
+                    "time": video.currentTime
+                };
+                sock.send(JSON.stringify(data));
             }
         }
 
